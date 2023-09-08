@@ -24,27 +24,49 @@ export default class Vim {
             return new VimOutput(newText, new Point(this.cursorPos.row, this.cursorPos.col), this.mode ) 
         }
 
+        // Do I need to make a new point each time?
         switch (commands) {
-            case 'i':
+            case 'i': // Switch to insert mode
                 return new VimOutput(this.text, this.cursorPos, INSERT_MODE)
-                
-            case 'j':
-                if (this.cursorPos.row < this.text.length - 1)
-                {
-                    /// Logic
+            case 'j': // move cursor down
+                if (this.cursorPos.row < this.text.length - 1) { // check if bottom of screen
+                    if (this.cursorPos.col > this.text[this.cursorPos.row + 1].length) {// check if current cursor column position is past the length of the row under current
+                        return new VimOutput(this.text, new Point(this.cursorPos.row - 1, this.text[this.cursorPos.row - 1].length), INSERT_MODE) // Fencepost error???
+                    }
+                    else {
+                        return new VimOutput(this.text, new Point(this.cursorPos.row - 1, this.cursorPos.col), INSERT_MODE)
+                    }
                 }
-                else 
-                {
+                else {
                     return new VimOutput(this.text, this.cursorPos, NORMAL_MODE)
                 }
             case 'k':
-                return new VimOutput(this.text, this.cursorPos, NORMAL_MODE)
+                if (this.cursorPos.row != 0) {// check if top of screen
+                    if (this.cursorPos.col > this.text[this.cursorPos.row - 1].length) {// check if cursor col is past length of row above
+                        return new VimOutput(this.text, new Point(this.cursorPos.row + 1, this.text[this.cursorPos.row + 1].length), INSERT_MODE) // Fencepost error???
+                    }
+                    else {
+                        return new VimOutput(this.text, new Point(this.cursorPos.row + 1, this.cursorPos.col), INSERT_MODE)
+                    }
+                }
+                else {
+                    return new VimOutput(this.text, this.cursorPos, NORMAL_MODE)
+                }
             case 'l':
-                return new VimOutput(this.text, this.cursorPos, NORMAL_MODE)
+                if (this.cursorPos.col < this.text[this.cursorPos.row].length) { // Make sure it isnt larger than the string itself
+                    return new VimOutput(this.text, new Point(this.cursorPos.row, this.cursorPos.col + 1), INSERT_MODE) // Fencepost 
+                }
+                else {
+                    return new VimOutput(this.text, new Point(this.cursorPos.row, this.cursorPos.col), INSERT_MODE)
+                }
             case 'h':
-                return new VimOutput(this.text, this.cursorPos, NORMAL_MODE)
+                if (this.cursorPos.col > 0) { // Stay on the screen
+                    return new VimOutput(this.text, new Point(this.cursorPos.row, this.cursorPos.col - 1), INSERT_MODE) // Fencepost 
+                }
+                else {
+                    return new VimOutput(this.text, new Point(this.cursorPos.row, this.cursorPos.col), INSERT_MODE)
+                }
         }
-
         return new VimOutput(this.text, this.cursorPos, this.mode); 
     }
 }
