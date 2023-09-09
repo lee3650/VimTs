@@ -1,8 +1,8 @@
 import VimOutput from "./VimOutput"; 
 import Point from "./Point";
 
-const NORMAL_MODE = 'normal'; 
-const INSERT_MODE = 'insert'; 
+export const NORMAL_MODE = 'normal'; 
+export const INSERT_MODE = 'insert'; 
 
 export default class Vim {
     text : string[]; 
