@@ -41,11 +41,12 @@ export default class Vim {
             case 'j': // move cursor down
                 if (this.cursorPos.row < this.text.length - 1) { // check if bottom of screen
                     if (this.cursorPos.col > this.text[this.cursorPos.row + 1].length) {// check if current cursor column position is past the length of the row under current
-                        this.cursorPos = new Point(this.cursorPos.row - 1, this.text[this.cursorPos.row - 1].length)
+                        this.cursorPos = new Point(this.cursorPos.row + 1, this.text[this.cursorPos.row + 1].length)
                         return new VimOutput(this.text, this.cursorPos, INSERT_MODE) // Fencepost error???
                     }
                     else {
-                        this.cursorPos = new Point(this.cursorPos.row - 1, this.cursorPos.col)
+                        //console.log('Please?')
+                        this.cursorPos = new Point(this.cursorPos.row + 1, this.cursorPos.col)
                         return new VimOutput(this.text, this.cursorPos, INSERT_MODE)
                     }
                 }
@@ -55,11 +56,11 @@ export default class Vim {
             case 'k':
                 if (this.cursorPos.row != 0) {// check if top of screen
                     if (this.cursorPos.col > this.text[this.cursorPos.row - 1].length) {// check if cursor col is past length of row above
-                        this.cursorPos = new Point(this.cursorPos.row + 1, this.text[this.cursorPos.row + 1].length)
+                        this.cursorPos = new Point(this.cursorPos.row - 1, this.text[this.cursorPos.row - 1].length)
                         return new VimOutput(this.text, this.cursorPos, INSERT_MODE) // Fencepost error???
                     }
                     else {
-                        this.cursorPos = new Point(this.cursorPos.row + 1, this.cursorPos.col)
+                        this.cursorPos = new Point(this.cursorPos.row - 1, this.cursorPos.col)
                         return new VimOutput(this.text, this.cursorPos, INSERT_MODE)
                     }
                 }
