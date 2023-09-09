@@ -1,3 +1,21 @@
-div {
-    white-space: pre-wrap;
+body {
+    --text-color: #ffffff; 
+    --cursor-color: #d6d6d6; 
+    --cursor-text-color: #454545; 
+    --background-col: #212121; 
+    --font-size: 13px; 
+    background-color: var(--background-col);
+    font-family: 'Inconsolata', 'Courier New';
+}
+
+.page {
+    background-color: var(--background-col);
+    color: var(--text-color);
+}
+
+.cursorChar {
+    color: var(--cursor-text-color);   
+    display: inline-block;
+    white-space: pre;
+    background-color: var(--cursor-color);
 }

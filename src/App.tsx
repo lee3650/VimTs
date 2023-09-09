@@ -33,21 +33,21 @@ function App() {
       let output = vim.execute(key);
       setText(output.text);
       setCursorPos([output.cursorPos.row, output.cursorPos.col]);
-      //setText(`${text}${event.key}`);
     },
     [text]
   );
 
-  function formatText(line : string, index : number) {
+  function formatLine(line : string, index : number) {
     if (index == cursorPos[0]) {
-        return <p >{line.slice(0, cursorPos[1])}<u>{line.slice(cursorPos[1], cursorPos[1] + 1)}</u>{line.slice(cursorPos[1]+1)}</p>
+        return <p key={index}>{line.slice(0, cursorPos[1])}<span className='cursorChar'>{line.slice(cursorPos[1], cursorPos[1] + 1)}</span>{line.slice(cursorPos[1]+1)}</p>
     }
-    return <p>{line}</p>
+    return <p key={index}>{line}</p>
   }
 
-  return  (
-  <div onKeyDown={checkKeyPress}>
-  <p>{text.map(formatText)}</p></div>);
+  return (
+    <div onKeyDown={checkKeyPress} className='page'>
+      {text.map(formatLine)}
+    </div>);
 }
 
 export default App
