@@ -4,12 +4,10 @@ export default class VimOutput {
     text : string[];
     cursorPos : Point; 
     mode : string; 
-    stringPos : number;
 
-    constructor(text : string[], cursorPos : Point, mode : string, stringPos : number) {
+    constructor(text : string[], cursorPos : Point, mode : string) {
         this.text = text; 
         this.cursorPos = cursorPos; 
         this.mode = mode;
-        this.stringPos = stringPos;
     }
 }

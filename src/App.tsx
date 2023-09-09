@@ -3,15 +3,15 @@ import React, {useEffect, ChangeEventHandler, useState, useCallback} from 'react
 import Vim from './model/Vim'; 
 import VimOutput from './model/VimOutput';
 
-const startingStr = 'Hello Vim!\nTry moving the cursor.'
+const startingStr = ['Hello Vim!', 'Try moving the cursor.'];
 
 function App() {
 
   //const [vim, setVim] = useState<Vim>(new Vim(startingStr))
-  const [text, setText] = useState(startingStr)
-  const [stringPos, setStringPos] = useState(0)
+  const [text, setText] = useState(startingStr);
+  const [cursorPos, setCursorPos] = useState([0, 0]);
 
-  let vim = new Vim(startingStr)
+  let vim = new Vim(startingStr.join('\n'));
 
   //function handleKey (ev : ChangeEventHandler<HTMLInputElement>) {
     //let key = ev.key
@@ -22,7 +22,6 @@ function App() {
 
   useEffect(() => {
     window.addEventListener("keydown", checkKeyPress);
-
     return () => {
       window.removeEventListener("keydown", checkKeyPress);
     };
@@ -30,27 +29,25 @@ function App() {
 
   const checkKeyPress = useCallback(
     (event : any) => {
-      console.log('Jello');
-      let key = event.key
-      let output = vim.execute(key)
-      console.log(output.text.join('\n'));
-      setText(output.text.join('\n'))
-      setStringPos(output.stringPos)
+      let key = event.key;
+      let output = vim.execute(key);
+      setText(output.text);
+      setCursorPos([output.cursorPos.row, output.cursorPos.col]);
       //setText(`${text}${event.key}`);
     },
     [text]
   );
-  
-  //const checkKeyPress = (e : any) => {
-  //  console.log('LOL');
-  //  const { key, keyCode } = e;
-  //  let output = vim.execute(key)
-  //  setText(output.text.join('\n'))
-  //};
 
+  function formatText(line : string, index : number) {
+    if (index == cursorPos[0]) {
+        return <p >{line.slice(0, cursorPos[1])}<u>{line.slice(cursorPos[1], cursorPos[1] + 1)}</u>{line.slice(cursorPos[1]+1)}</p>
+    }
+    return <p>{line}</p>
+  }
 
-
-  return  (<div onKeyDown={checkKeyPress}><p >{text.slice(0, stringPos)}<u>{text.slice(stringPos, stringPos+1)}</u>{text.slice(stringPos+1)}</p></div>);
+  return  (
+  <div onKeyDown={checkKeyPress}>
+  <p>{text.map(formatText)}</p></div>);
 }
 
 export default App
