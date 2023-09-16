@@ -1,14 +1,18 @@
 import VimOutput from "./VimOutput"; 
 import Point from "./Point";
+import HandleVisual from "./VisualMode";
 
 export const NORMAL_MODE = 'normal'; 
 export const INSERT_MODE = 'insert'; 
+export const VISUAL_MODE = 'visual'; 
 
 export default class Vim {
     text : string[]; 
     cursorPos : Point; 
     mode : string; 
     stringPos : number;
+    visualStart : Point; 
+    visualEnd : Point; 
 
     constructor(startText : string)
     {
@@ -16,6 +20,8 @@ export default class Vim {
         this.cursorPos = new Point(0, 0);
         this.mode = NORMAL_MODE;
         this.stringPos = 0;
+        this.visualEnd = new Point(0,0);
+        this.visualStart = new Point(0,0); 
     }
 
     calculateStringCursorPos() {
@@ -166,6 +172,9 @@ export default class Vim {
             case '$':
                 this.cursorPos = new Point(this.cursorPos.row, this.text[this.cursorPos.row].length);
                 return new VimOutput(this.text, this.cursorPos, NORMAL_MODE);
+            case 'v':
+                this.mode = VISUAL_MODE;
+                return new VimOutput(this.text, this.cursorPos, INSERT_MODE, this.cursorPos, this.cursorPos);
         }
         return new VimOutput(this.text, this.cursorPos, this.mode);
     }
@@ -181,11 +190,19 @@ export default class Vim {
         else if (this.mode == NORMAL_MODE) {
             return this.exec_normal_mode(commands);
         }
+        else if (this.mode == VISUAL_MODE)
+        {
+            const outpt = HandleVisual(new VimOutput(this.text, this.cursorPos, 
+                VISUAL_MODE, this.visualStart, this.visualEnd), commands); 
+
+            this.cursorPos = outpt.cursorPos;
+            this.visualEnd = outpt.visualEnd;
+            this.visualStart = outpt.visualStart; 
+            this.mode = outpt.mode; 
+            return new VimOutput(this.text, this.cursorPos, this.mode, this.visualStart, this.visualEnd); 
+        }
         // Do I need to make a new point each time?
         
         return new VimOutput(this.text, this.cursorPos, this.mode); 
     }
 }
-
-
-

@@ -1,0 +1,22 @@
+import VimOutput from "./VimOutput"; 
+import { NORMAL_MODE, VISUAL_MODE } from "./Vim";
+import Point from "./Point";
+import { HandleMove } from "./Utility";
+
+const HandleVisual = (curstate : VimOutput, command : string) : VimOutput => {
+    switch (command)
+    {
+        case 'h':
+        case 'l':
+        case 'k':
+        case 'j':
+            const newpos = HandleMove(curstate.text, curstate.cursorPos, command); 
+            return new VimOutput(curstate.text, curstate.cursorPos, VISUAL_MODE, curstate.visualStart, newpos); 
+        case 'Escape': 
+            return new VimOutput(curstate.text, curstate.cursorPos, NORMAL_MODE);
+    }
+
+    return curstate; 
+}
+
+export default HandleVisual; 
