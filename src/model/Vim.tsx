@@ -26,6 +26,44 @@ export default class Vim {
         return count + this.cursorPos.col
     }
 
+    exec_arrow_movement(commands : string) {
+        switch (commands) {
+            case 'ArrowDown': // move cursor down
+                if (this.cursorPos.row < this.text.length - 1) { // check if bottom of screen
+                    if (this.cursorPos.col > this.text[this.cursorPos.row + 1].length) {// check if current cursor column position is past the length of the row under current
+                        this.cursorPos = new Point(this.cursorPos.row + 1, this.text[this.cursorPos.row + 1].length);
+                    }
+                    else {
+                        //console.log('Please?')
+                        this.cursorPos = new Point(this.cursorPos.row + 1, this.cursorPos.col);
+                    }
+                }
+                break;
+            case 'ArrowUp':
+                if (this.cursorPos.row != 0) {// check if top of screen
+                    if (this.cursorPos.col > this.text[this.cursorPos.row - 1].length) {// check if cursor col is past length of row above
+                        this.cursorPos = new Point(this.cursorPos.row - 1, this.text[this.cursorPos.row - 1].length);
+                    }
+                    else {
+                        this.cursorPos = new Point(this.cursorPos.row - 1, this.cursorPos.col);
+                    }
+                }
+                break;
+            case 'ArrowRight':
+                //console.log('Pressed l');
+                if (this.cursorPos.col < this.text[this.cursorPos.row].length) { // Make sure it isnt larger than the string itself
+                    this.cursorPos = new Point(this.cursorPos.row, this.cursorPos.col + 1);
+                }
+                break
+            case 'ArrowLeft':
+                if (this.cursorPos.col > 0) { // Stay on the screen
+                    this.cursorPos = new Point(this.cursorPos.row, this.cursorPos.col - 1);
+                }
+                break;
+        }
+        return new VimOutput(this.text, this.cursorPos, this.mode);
+    }
+
     exec_insert_mode(commands : string) : VimOutput {
         switch (commands) {
             case 'Escape':
@@ -50,6 +88,21 @@ export default class Vim {
                 else {
                     return new VimOutput(this.text, this.cursorPos, NORMAL_MODE);
                 }
+            case 'Enter':
+                let newText = this.text
+                let temp = this.text[this.cursorPos.row].slice(this.cursorPos.col)
+                newText[this.cursorPos.row] = this.text[this.cursorPos.row].slice(0, this.cursorPos.col);
+                let replace = '';
+                newText.push('')
+                for (let i = this.cursorPos.row + 1; i < newText.length; i++) {
+                    replace = newText[i];
+                    newText[i] = temp;
+                    temp = replace;
+                }
+                //+ this.text[this.cursorPos.row].slice(this.cursorPos.col)
+                this.cursorPos = new Point(this.cursorPos.row + 1, 0);
+                this.text = newText;
+                return new VimOutput(this.text, this.cursorPos, this.mode);
         }
         let newText = this.text
         newText[this.cursorPos.row] = this.text[this.cursorPos.row].slice(0, this.cursorPos.col) + commands + this.text[this.cursorPos.row].slice(this.cursorPos.col)
@@ -119,11 +172,15 @@ export default class Vim {
     }
 
     execute(commands : string) : VimOutput {
+        if (commands.includes('Arrow')) {
+            return this.exec_arrow_movement(commands)
+
+        }
         if (this.mode == INSERT_MODE) {
-            this.exec_insert_mode(commands);
+            return this.exec_insert_mode(commands);
         }
         else if (this.mode == NORMAL_MODE) {
-            this.exec_normal_mode(commands);
+            return this.exec_normal_mode(commands);
         }
         // Do I need to make a new point each time?
         
