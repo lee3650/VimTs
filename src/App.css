@@ -19,3 +19,8 @@ body {
     white-space: pre;
     background-color: var(--cursor-color);
 }
+
+.footer {
+    position: fixed; 
+    bottom: 1em; 
+}
