@@ -46,7 +46,7 @@ function App() {
   return (
     <div onKeyDown={checkKeyPress} className='page'>
       {text.map(formatLine)}
-      <div>--{mode}--</div>
+      <div className='footer'>--{mode}--</div>
     </div>);
 }
 
