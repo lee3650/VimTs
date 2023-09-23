@@ -96,18 +96,19 @@ export default class Vim {
                 }
             case 'Enter':
                 let newText = this.text
-                newText[this.cursorPos.row] = this.text[this.cursorPos.row].slice(0, this.cursorPos.col) + '\n'
                 let temp = this.text[this.cursorPos.row].slice(this.cursorPos.col)
+                newText[this.cursorPos.row] = this.text[this.cursorPos.row].slice(0, this.cursorPos.col);
                 let replace = '';
+                newText.push('')
                 for (let i = this.cursorPos.row + 1; i < newText.length; i++) {
-                    replace = this.text[i];
-                    this.text[i] = temp;
+                    replace = newText[i];
+                    newText[i] = temp;
                     temp = replace;
                 }
-                newText.push(temp);
                 //+ this.text[this.cursorPos.row].slice(this.cursorPos.col)
                 this.cursorPos = new Point(this.cursorPos.row + 1, 0);
-                return new VimOutput(newText, this.cursorPos, this.mode);
+                this.text = newText;
+                return new VimOutput(this.text, this.cursorPos, this.mode);
         }
         let newText = this.text
         newText[this.cursorPos.row] = this.text[this.cursorPos.row].slice(0, this.cursorPos.col) + commands + this.text[this.cursorPos.row].slice(this.cursorPos.col)
