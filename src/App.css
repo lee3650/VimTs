@@ -8,6 +8,10 @@ body {
     font-family: 'Inconsolata', 'Courier New';
 }
 
+pre {
+    font-family: 'Inconsolata', 'Courier New';
+}
+
 .page {
     background-color: var(--background-col);
     color: var(--text-color);
