@@ -1,8 +1,10 @@
 import VimOutput from "./VimOutput"; 
 import Point from "./Point";
+import HandleVisual from "./VisualMode";
 
 export const NORMAL_MODE = 'normal'; 
 export const INSERT_MODE = 'insert'; 
+export const VISUAL_MODE = 'visual'; 
 
 export default class Vim {
     text : string[]; 
@@ -10,6 +12,7 @@ export default class Vim {
     mode : string; 
     stringPos : number;
     isCntrlKeyDown : boolean;
+    visualStart : Point; 
 
     constructor(startText : string)
     {
@@ -18,6 +21,7 @@ export default class Vim {
         this.mode = NORMAL_MODE;
         this.stringPos = 0;
         this.isCntrlKeyDown = false;
+        this.visualStart = new Point(0,0); 
     }
 
     calculateStringCursorPos() {
@@ -188,6 +192,10 @@ export default class Vim {
             case '$':
                 this.cursorPos = new Point(this.cursorPos.row, this.text[this.cursorPos.row].length);
                 return new VimOutput(this.text, this.cursorPos, NORMAL_MODE, this.isCntrlKeyDown);
+            case 'v':
+                this.mode = VISUAL_MODE;
+                this.visualStart = this.cursorPos; 
+                return new VimOutput(this.text, this.cursorPos, this.mode, this.cursorPos);
         }
         return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
     }
@@ -207,11 +215,18 @@ export default class Vim {
         else if (this.mode == NORMAL_MODE) {
             return this.exec_normal_mode(commands);
         }
+        else if (this.mode == VISUAL_MODE)
+        {
+            const outpt = HandleVisual(new VimOutput(this.text, this.cursorPos, 
+                VISUAL_MODE, this.visualStart), commands); 
+
+            this.cursorPos = outpt.cursorPos;
+            this.visualStart = outpt.visualStart; 
+            this.mode = outpt.mode; 
+            return new VimOutput(this.text, this.cursorPos, this.mode, this.visualStart); 
+        }
         // Do I need to make a new point each time?
         
         return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown); 
     }
 }
-
-
-
