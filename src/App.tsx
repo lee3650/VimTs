@@ -110,15 +110,17 @@ function App() {
           let cursorPart = line.slice(cursorPos[1], cursorPos[1] + 1)
           if (cursorPart.length === 0)
             cursorPart = ' '
-          return <p key={index}>{line.slice(0, cursorPos[1])}<span className='cursorChar'>{cursorPart}</span>{line.slice(cursorPos[1]+1)}</p>
+          return <span key={index}>{line.slice(0, cursorPos[1])}<span className='cursorChar'>{cursorPart}</span>{line.slice(cursorPos[1]+1)}{'\n'}</span>
       }
-      return <p key={index}>{line}</p>
+      return <span key={index}>{line}{'\n'}</span>
     }
   }
 
   return (
     <div onKeyDown={checkKeyPress} className='page'>
+      <pre>
       {text.map(formatLine)}
+      </pre>
       <div className='footer'>--{mode}--</div>
     </div>);
 }
