@@ -12,7 +12,6 @@ export default class Vim {
     mode : string; 
     stringPos : number;
     visualStart : Point; 
-    visualEnd : Point; 
 
     constructor(startText : string)
     {
@@ -20,7 +19,6 @@ export default class Vim {
         this.cursorPos = new Point(0, 0);
         this.mode = NORMAL_MODE;
         this.stringPos = 0;
-        this.visualEnd = new Point(0,0);
         this.visualStart = new Point(0,0); 
     }
 
@@ -175,7 +173,8 @@ export default class Vim {
                 return new VimOutput(this.text, this.cursorPos, NORMAL_MODE);
             case 'v':
                 this.mode = VISUAL_MODE;
-                return new VimOutput(this.text, this.cursorPos, INSERT_MODE, this.cursorPos, this.cursorPos);
+                this.visualStart = this.cursorPos; 
+                return new VimOutput(this.text, this.cursorPos, this.mode, this.cursorPos);
         }
         return new VimOutput(this.text, this.cursorPos, this.mode);
     }
@@ -194,13 +193,12 @@ export default class Vim {
         else if (this.mode == VISUAL_MODE)
         {
             const outpt = HandleVisual(new VimOutput(this.text, this.cursorPos, 
-                VISUAL_MODE, this.visualStart, this.visualEnd), commands); 
+                VISUAL_MODE, this.visualStart), commands); 
 
             this.cursorPos = outpt.cursorPos;
-            this.visualEnd = outpt.visualEnd;
             this.visualStart = outpt.visualStart; 
             this.mode = outpt.mode; 
-            return new VimOutput(this.text, this.cursorPos, this.mode, this.visualStart, this.visualEnd); 
+            return new VimOutput(this.text, this.cursorPos, this.mode, this.visualStart); 
         }
         // Do I need to make a new point each time?
         
