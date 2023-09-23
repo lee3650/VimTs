@@ -23,9 +23,19 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    window.addEventListener("keyup", checkSpecialKey);
+    return () => {
+      window.removeEventListener("keyup", checkSpecialKey);
+    };
+  }, []);
+
   const checkKeyPress = useCallback(
     (event : any) => {
       let key = event.key;
+      if (event.ctrlKey) {
+        key = key.concat('$CONTROL$');
+      }
       let output = vim.execute(key);
       setText(output.text);
       // 0 = ROW, 1 = COL 
@@ -35,6 +45,13 @@ function App() {
     },
     [text]
   );
+
+  const checkSpecialKey = useCallback(
+    (event : any) => {
+      let key = event.key;
+    },
+    [text]
+  )
 
   function formatLine(line : string, index : number) {
     if (mode == VISUAL_MODE)
