@@ -48,7 +48,12 @@ function App() {
 
   const checkSpecialKey = useCallback(
     (event : any) => {
-      let key = event.key;
+      let key = ""
+      if (event.ctrlKey) {
+        key = '$CONTROL$'
+        let output = vim.execute(key);
+      }
+      //setControlKey?
     },
     [text]
   )

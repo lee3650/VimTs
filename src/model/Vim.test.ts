@@ -105,4 +105,21 @@ test('Enter Key', () => {
     expect(output.cursorPos.col).toBe(1)
     output = myvim.execute('Enter')
     expect(output.text.join('\n')).toBe('t\nhis is a test\nt\nhis is a second line')
+
+
+})
+test('Enter Key inverse Backspace', () => {
+    const myvim = new Vim('this is a test\nthis is a second line')
+    let output = myvim.execute('k')
+    expect(output.cursorPos.row).toBe(0)
+    output = myvim.execute('j')
+    expect(output.cursorPos.row).toBe(1)
+    output = myvim.execute('l')
+    expect(output.cursorPos.col).toBe(1)
+    output = myvim.execute('i')
+    expect(output.mode).toBe('insert')
+    output = myvim.execute('Enter')
+    output = myvim.execute('Backspace')
+    output = myvim.execute('Enter')
+    expect(output.text.join('\n')).toBe('this is a test\nt\nhis is a second line')
 })

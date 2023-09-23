@@ -24,14 +24,6 @@ export default class Vim {
         this.visualStart = new Point(0,0); 
     }
 
-    calculateStringCursorPos() {
-        let count = 0;
-        for (let i = 0; i < this.cursorPos.row; i++) {
-            count += this.text[i].length;
-        }
-        return count + this.cursorPos.col
-    }
-
     exec_arrow_movement(commands : string) {
         switch (commands) {
             case 'ArrowDown': // move cursor down
@@ -70,8 +62,28 @@ export default class Vim {
         return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
     }
 
+    exec_cntrl_insert_mode(commands : string) : VimOutput {
+        
+        switch (commands) {
+            case 't':
+                this.text[this.cursorPos.row] = "\t" + this.text[this.cursorPos.row]
+                this.cursorPos = new Point(this.cursorPos.row, this.cursorPos.col + 1);
+                return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
+            case 'd':
+                if (this.text[this.cursorPos.row][0] == '\t') {
+                    this.text[this.cursorPos.row] = this.text[this.cursorPos.row].substring(1)
+                    this.cursorPos = new Point(this.cursorPos.row, this.cursorPos.col - 1);
+                    return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
+                }
+            default:
+                return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
+        }
+    }
+
     exec_insert_mode(commands : string) : VimOutput {
-        console.log(commands);
+        if (this.isCntrlKeyDown) {
+            return this.exec_cntrl_insert_mode(commands)
+        }
         switch (commands) {
             case 'Escape':
                 this.mode = NORMAL_MODE
@@ -99,7 +111,7 @@ export default class Vim {
                     return new VimOutput(newText, this.cursorPos, this.mode, this.isCntrlKeyDown);
                 }
                 else {
-                    return new VimOutput(this.text, this.cursorPos, NORMAL_MODE, this.isCntrlKeyDown);
+                    return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
                 }
             case 'Delete':
                 if (this.cursorPos.col < this.text[this.cursorPos.row].length) { // Stay on the screen
@@ -107,8 +119,22 @@ export default class Vim {
                     newText[this.cursorPos.row] = this.text[this.cursorPos.row].slice(0, this.cursorPos.col) + this.text[this.cursorPos.row].slice(this.cursorPos.col + 1);
                     return new VimOutput(newText, this.cursorPos, this.mode, this.isCntrlKeyDown);
                 }
+                else if (this.cursorPos.row < this.text[this.cursorPos.row].length - 1) {
+                    let newText = this.text
+                    let rowLen = 0;
+                    rowLen = newText[this.cursorPos.row].length
+                    newText[this.cursorPos.row] = newText[this.cursorPos.row].concat(newText[this.cursorPos.row + 1])
+                    let temp = '';
+                    for (let i = this.cursorPos.row + 1; i < newText.length - 1; i++) {
+                        temp = newText[i+1];
+                        newText[i] = temp;
+                    }
+                    //+ this.text[this.cursorPos.row].slice(this.cursorPos.col)
+                    newText.splice(-1);
+                    return new VimOutput(newText, this.cursorPos, this.mode, this.isCntrlKeyDown);
+                }
                 else {
-                    return new VimOutput(this.text, this.cursorPos, NORMAL_MODE, this.isCntrlKeyDown);
+                    return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
                 }
             case 'Enter':
                 let newText = this.text
@@ -125,7 +151,20 @@ export default class Vim {
                 this.cursorPos = new Point(this.cursorPos.row + 1, 0);
                 this.text = newText;
                 return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
-            case 'Shift':
+            case 'Shift': // fallthrough
+            case 'F12':
+            case 'F11':
+            case 'F10':
+            case 'F9':
+            case 'F8':
+            case 'F7':
+            case 'F6':
+            case 'F5':
+            case 'F4':
+            case 'F3':
+            case 'F2':
+            case 'F1':
+            case 'Control':
                 return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
 
         }
@@ -200,14 +239,17 @@ export default class Vim {
         return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
     }
 
-    parse_command(commands : string) : string {
-        return commands
+    handle_control(commands : string) : string {
+        this.isCntrlKeyDown = !this.isCntrlKeyDown;
+        return commands.slice(-'$CONTROL$'.length)
     }
 
     execute(commands : string) : VimOutput {
+        if (commands.includes('$CONTROL$')) {
+            commands = this.handle_control(commands);
+        }
         if (commands.includes('Arrow')) {
             return this.exec_arrow_movement(commands)
-
         }
         if (this.mode == INSERT_MODE) {
             return this.exec_insert_mode(commands);
