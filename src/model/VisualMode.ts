@@ -11,9 +11,9 @@ const HandleVisual = (curstate : VimOutput, command : string) : VimOutput => {
         case 'k':
         case 'j':
             const newpos = HandleMove(curstate.text, curstate.cursorPos, command); 
-            return new VimOutput(curstate.text, newpos, VISUAL_MODE, curstate.visualStart); 
+            return new VimOutput(curstate.text, newpos, VISUAL_MODE, curstate.isCntrlKeyDown, curstate.visualStart); 
         case 'Escape': 
-            return new VimOutput(curstate.text, curstate.cursorPos, NORMAL_MODE);
+            return new VimOutput(curstate.text, curstate.cursorPos, NORMAL_MODE, curstate.isCntrlKeyDown);
     }
 
     return curstate; 

@@ -195,7 +195,7 @@ export default class Vim {
             case 'v':
                 this.mode = VISUAL_MODE;
                 this.visualStart = this.cursorPos; 
-                return new VimOutput(this.text, this.cursorPos, this.mode, this.cursorPos);
+                return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown, this.cursorPos);
         }
         return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
     }
@@ -218,12 +218,12 @@ export default class Vim {
         else if (this.mode == VISUAL_MODE)
         {
             const outpt = HandleVisual(new VimOutput(this.text, this.cursorPos, 
-                VISUAL_MODE, this.visualStart), commands); 
+                VISUAL_MODE, this.isCntrlKeyDown, this.visualStart), commands); 
 
             this.cursorPos = outpt.cursorPos;
             this.visualStart = outpt.visualStart; 
             this.mode = outpt.mode; 
-            return new VimOutput(this.text, this.cursorPos, this.mode, this.visualStart); 
+            return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown, this.visualStart); 
         }
         // Do I need to make a new point each time?
         
