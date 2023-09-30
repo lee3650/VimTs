@@ -12,6 +12,10 @@ export function IsMove(input : string) : boolean
         case 'b':
         case '$':
         case '0':
+        case 'ArrowLeft':
+        case 'ArrowRight':
+        case 'ArrowUp':
+        case 'ArrowDown':
             return true; 
     }
 

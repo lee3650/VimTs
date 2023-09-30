@@ -34,7 +34,12 @@ export default class Vim {
     }
 
     exec_insert_mode(commands : string) : VimOutput {
-        console.log(commands);
+        if (commands.indexOf('Arrow') >= 0)
+        {
+            this.cursorPos = HandleMove(this.text, this.cursorPos, commands);
+            return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown); 
+        }
+
         switch (commands) {
             case 'Escape':
                 this.mode = NORMAL_MODE
