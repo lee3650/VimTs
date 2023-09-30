@@ -76,6 +76,7 @@ export default class Vim {
                     this.cursorPos = new Point(this.cursorPos.row, this.cursorPos.col - 1);
                     return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
                 }
+                return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
             default:
                 return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
         }
