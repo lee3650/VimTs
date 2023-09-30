@@ -12,7 +12,8 @@ export default class Vim {
     mode : string; 
     stringPos : number;
     isCntrlKeyDown : boolean;
-    visualStart : Point; 
+    visualStart : Point;
+    previousText : string[][];
 
     constructor(startText : string)
     {
@@ -22,6 +23,7 @@ export default class Vim {
         this.stringPos = 0;
         this.isCntrlKeyDown = false;
         this.visualStart = new Point(0,0); 
+        this.previousText = [this.text];
     }
 
     exec_arrow_movement(commands : string) {
@@ -241,7 +243,7 @@ export default class Vim {
 
     handle_control(commands : string) : string {
         this.isCntrlKeyDown = !this.isCntrlKeyDown;
-        return commands.slice(-'$CONTROL$'.length)
+        return commands.slice(0, -1*'$CONTROL$'.length)
     }
 
     execute(commands : string) : VimOutput {
@@ -267,8 +269,6 @@ export default class Vim {
             this.mode = outpt.mode; 
             return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown, this.visualStart); 
         }
-        // Do I need to make a new point each time?
-        
         return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown); 
     }
 }

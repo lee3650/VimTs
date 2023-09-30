@@ -12,8 +12,8 @@ function App() {
   const [text, setText] = useState(startingStr);
   const [cursorPos, setCursorPos] = useState([0, 0]);
   const [mode, setMode] = useState(NORMAL_MODE)
-  const [visualStart, setVisualStart] = useState([0, 0]); 
-
+  const [visualStart, setVisualStart] = useState([0, 0]);
+  
   let vim = new Vim(startingStr.join('\n'));
 
   useEffect(() => {
@@ -32,6 +32,7 @@ function App() {
 
   const checkKeyPress = useCallback(
     (event : any) => {
+      event.preventDefault()
       let key = event.key;
       if (event.ctrlKey) {
         key = key.concat('$CONTROL$');
