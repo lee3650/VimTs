@@ -1,23 +1,41 @@
 import Point from "./Point";
 
+export function IsMove(input : string) : boolean
+{
+    switch (input)
+    {
+        case 'h':
+        case 'j':
+        case 'k':
+        case 'l':
+        case 'w':
+        case 'b':
+        case '$':
+        case '0':
+            return true; 
+    }
+
+    return false; 
+}
+
 export function HandleMove(text : string[], curPos : Point, command : string) : Point {
-    if (command == 'h')    
+    if (command == 'h' || command == 'ArrowLeft')    
     {
         return new Point(curPos.row, Math.max(0, curPos.col - 1)); 
     }
-    if (command == 'j')    
+    if (command == 'j' || command == 'ArrowDown')    
     {
-        const newrow = Math.min(curPos.row - 1, text.length - 1)
+        const newrow = Math.min(curPos.row + 1, text.length - 1)
         const newcol = curPos.col < text[newrow].length ? curPos.col : text[newrow].length - 1; 
         return new Point(newrow, newcol); 
     }
-    if (command == 'k')
+    if (command == 'k' || command == 'ArrowUp')
     {
         const newrow = Math.max(0, curPos.row - 1)
         const newcol = curPos.col < text[newrow].length ? curPos.col : text[newrow].length - 1; 
         return new Point(newrow, newcol); 
     }
-    if (command == 'l')
+    if (command == 'l' || command=='ArrowRight')
     {
         return new Point(curPos.row, Math.min(curPos.col + 1, text[curPos.row].length)); 
     }
@@ -28,6 +46,14 @@ export function HandleMove(text : string[], curPos : Point, command : string) : 
     if (command == 'b')
     {
         return handleb(text, curPos); 
+    }
+    if (command == '$')
+    {
+        return new Point(curPos.row, text[curPos.row].length);
+    }
+    if (command == '0')
+    {
+        return new Point(curPos.row, 0);
     }
 
     return curPos; 
