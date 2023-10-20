@@ -1,15 +1,19 @@
 import VimOutput from "./VimOutput"; 
 import Point from "./Point";
 import HandleVisual from "./VisualMode";
+import HandleCommand from "./CommandMode";
 
 export const NORMAL_MODE = 'normal'; 
 export const INSERT_MODE = 'insert'; 
 export const VISUAL_MODE = 'visual'; 
+export const COMMAND_MODE = 'command';
 
 export default class Vim {
     text : string[]; 
+    commandText : string;
     cursorPos : Point; 
-    mode : string; 
+    commandCursorPos : Point;
+    mode : string;
     stringPos : number;
     isCntrlKeyDown : boolean;
     visualStart : Point;
@@ -18,7 +22,9 @@ export default class Vim {
     constructor(startText : string)
     {
         this.text = startText.split('\n');
+        this.commandText = "";
         this.cursorPos = new Point(0, 0);
+        this.commandCursorPos = new Point(0, 0);
         this.mode = NORMAL_MODE;
         this.stringPos = 0;
         this.isCntrlKeyDown = false;
@@ -181,6 +187,10 @@ export default class Vim {
             case 'i': // Switch to insert mode
                 this.mode = INSERT_MODE;
                 return new VimOutput(this.text, this.cursorPos, INSERT_MODE, this.isCntrlKeyDown);
+            case ':':
+                console.log("ABOUT TO ENTER");
+                this.mode = COMMAND_MODE;
+                return new VimOutput(this.text, this.cursorPos, COMMAND_MODE, this.isCntrlKeyDown, new Point(0,0), new Point(0, 0), "");
             case 'j': // move cursor down
                 if (this.cursorPos.row < this.text.length - 1) { // check if bottom of screen
                     if (this.cursorPos.col > this.text[this.cursorPos.row + 1].length) {// check if current cursor column position is past the length of the row under current
@@ -247,6 +257,7 @@ export default class Vim {
     }
 
     execute(commands : string) : VimOutput {
+        console.log(this.mode);
         if (commands.includes('$CONTROL$')) {
             commands = this.handle_control(commands);
         }
@@ -258,6 +269,13 @@ export default class Vim {
         }
         else if (this.mode == NORMAL_MODE) {
             return this.exec_normal_mode(commands);
+        }
+        else if (this.mode == COMMAND_MODE) {
+            let outpt = null;
+            [outpt, this.commandCursorPos, this.commandText] = HandleCommand(new VimOutput(this.text, this.cursorPos, 
+                COMMAND_MODE, this.isCntrlKeyDown, this.visualStart), commands, this.commandCursorPos, this.commandText); 
+            this.mode = outpt.mode; 
+            return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown, new Point(0, 0), this.commandCursorPos, this.commandText); 
         }
         else if (this.mode == VISUAL_MODE)
         {

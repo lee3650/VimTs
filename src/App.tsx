@@ -1,6 +1,6 @@
 import './App.css'
 import React, {useEffect, ChangeEventHandler, useState, useCallback} from 'react'
-import Vim, { VISUAL_MODE } from './model/Vim'; 
+import Vim, { COMMAND_MODE, VISUAL_MODE } from './model/Vim'; 
 import VimOutput from './model/VimOutput';
 import { NORMAL_MODE, INSERT_MODE } from './model/Vim';
 
@@ -13,7 +13,9 @@ function App() {
   const [cursorPos, setCursorPos] = useState([0, 0]);
   const [mode, setMode] = useState(NORMAL_MODE)
   const [visualStart, setVisualStart] = useState([0, 0]);
-  
+  const [commandText, setCommandText] = useState("");
+  const [commandCursorPos, setCommandCursorPos] = useState([0, 0])
+
   let vim = new Vim(startingStr.join('\n'));
 
   useEffect(() => {
@@ -42,7 +44,9 @@ function App() {
       // 0 = ROW, 1 = COL 
       setCursorPos([output.cursorPos.row, output.cursorPos.col]);
       setMode(output.mode); 
-      setVisualStart([output.visualStart.row, output.visualStart.col]); 
+      setVisualStart([output.visualStart.row, output.visualStart.col]);
+      setCommandCursorPos([output.commandCursorPos.row, output.commandCursorPos.col]);
+      setCommandText(output.commandText);
     },
     [text]
   );
@@ -122,10 +126,25 @@ function App() {
     }
   }
 
+  function formatFooter() {
+    console.log(mode);
+    if (mode != COMMAND_MODE) {
+      console.log("Should be here");
+      return <p>--{mode}--</p>
+    }
+    else {
+      console.log("Why?");
+      let cursorPart = commandText.slice(commandCursorPos[1], commandCursorPos[1] + 1)
+      if (cursorPart.length === 0)
+        cursorPart = ' '
+      return <p key={-1}>:{commandText.slice(0, cursorPos[1])}<span className='cursorChar'>{cursorPart}</span>{commandText.slice(cursorPos[1]+1)}</p>
+    }
+  }
+
   return (
     <div onKeyDown={checkKeyPress} className='page'>
       {text.map(formatLine)}
-      <div className='footer'>--{mode}--</div>
+      <div className='footer'>{formatFooter()}</div>
     </div>);
 }
 
