@@ -1,12 +1,10 @@
-import './App.css'
+import './VimApp.css'
 import React, {useEffect, ChangeEventHandler, useState, useCallback} from 'react'
 import Vim, { COMMAND_MODE, VISUAL_MODE } from './model/Vim'; 
 import VimOutput from './model/VimOutput';
 import { NORMAL_MODE, INSERT_MODE } from './model/Vim';
 
-const startingStr = ['Hello Vim!', 'Try moving the cursor.'];
-
-function App() {
+const VimApp : React.FC<{ startingStr : string[] }> = ({startingStr}) => {
 
   //const [vim, setVim] = useState<Vim>(new Vim(startingStr))
   const [text, setText] = useState(startingStr);
@@ -148,4 +146,4 @@ function App() {
     </div>);
 }
 
-export default App
+export default VimApp
