@@ -1,0 +1,12 @@
+.lessonContainer {
+    display: grid; 
+    grid-template-columns: 1fr 1fr;
+}
+
+.lessonBody {
+    grid-column-start: 0 span 1;
+}
+
+.lessonVimApp {
+    grid-column-start: 1 span 1;
+}
