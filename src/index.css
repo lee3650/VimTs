@@ -6,4 +6,6 @@ body {
     --font-size: 13px; 
     background-color: var(--background-col);
     font-family: 'Inconsolata', 'Courier New';
+    padding: 0; 
+    margin: 0; 
 }

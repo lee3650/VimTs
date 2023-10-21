@@ -88,7 +88,7 @@ const VimApp : React.FC<{ startingStr : string[] }> = ({startingStr}) => {
 
       if (index < startPos[0] || index > endPos[0])
       {
-        return <p key={index}>{line}</p>
+        return <span key={index}>{line}{'\n'}</span>
       }
 
       let startind = 0; 
@@ -110,7 +110,7 @@ const VimApp : React.FC<{ startingStr : string[] }> = ({startingStr}) => {
 
       insel = line.slice(startind, endind); 
 
-      return <p key={index}>{before}<span className='cursorChar'>{insel}</span>{after}</p>
+      return <span key={index}>{before}<span className='cursorChar'>{insel}</span>{after}{'\n'}</span>
     }
     else 
     {

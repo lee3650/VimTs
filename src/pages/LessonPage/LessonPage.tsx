@@ -1,5 +1,6 @@
-import VimApp from "../VimApp"
+import VimApp from "../../VimApp"
 import LessonBody from "./LessonBody/LessonBody"
+import './LessonBody.css'
 
 const lessonTitle = 'Lesson 1: Files'
 const lessonBody = 'This is an example lesson that would teach you something about vim.'

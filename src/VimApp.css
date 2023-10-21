@@ -5,16 +5,22 @@ pre {
 .page {
     background-color: var(--background-col);
     color: var(--text-color);
+    height: 100%; 
+    width: 100%;
+    margin: 0; 
+    padding: 0; 
 }
 
 .cursorChar {
     color: var(--cursor-text-color);   
     display: inline-block;
-    white-space: pre;
+    white-space: pre-wrap;
+    white-space: -o-pre-wrap;
+    white-space: -moz-pre-wrap;
     background-color: var(--cursor-color);
 }
 
 .footer {
-    position: fixed; 
-    bottom: 1em; 
+    position: absolute; 
+    bottom: 1px; 
 }

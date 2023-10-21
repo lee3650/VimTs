@@ -1,3 +1,5 @@
+import './LessonBody.css'
+
 interface LessonBodyProps {
     lessonTitle : string
     lessonBody : string; 
