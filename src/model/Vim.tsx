@@ -2,6 +2,7 @@ import VimOutput from "./VimOutput";
 import Point from "./Point";
 import HandleVisual from "./VisualMode";
 import HandleCommand from "./CommandMode";
+import { HandleMove } from "./Utility";
 
 export const NORMAL_MODE = 'normal'; 
 export const INSERT_MODE = 'insert'; 
@@ -83,6 +84,7 @@ export default class Vim {
                     this.cursorPos = new Point(this.cursorPos.row, this.cursorPos.col - 1);
                     return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
                 }
+                return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
             default:
                 return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
         }
@@ -243,10 +245,15 @@ export default class Vim {
             case '$':
                 this.cursorPos = new Point(this.cursorPos.row, this.text[this.cursorPos.row].length);
                 return new VimOutput(this.text, this.cursorPos, NORMAL_MODE, this.isCntrlKeyDown);
+            case 'w':
+            case 'b': 
+                this.cursorPos = HandleMove(this.text, this.cursorPos, commands); 
+                return new VimOutput(this.text, this.cursorPos, NORMAL_MODE, this.isCntrlKeyDown); 
             case 'v':
                 this.mode = VISUAL_MODE;
                 this.visualStart = this.cursorPos; 
                 return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown, this.cursorPos);
+            
         }
         return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown);
     }
