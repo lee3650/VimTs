@@ -7,6 +7,9 @@ const HomePage = () => {
         <NavLink>
             <Link to='/playground'>Go to Playground</Link>
         </NavLink>
+        <NavLink>
+            <Link to='/learning'>Go to Learning page</Link>
+        </NavLink>
     </>
 }
 
