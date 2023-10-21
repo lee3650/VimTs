@@ -51,6 +51,10 @@ export function HandleMove(text : string[], cursorPos : Point, command : string)
             else {
                 return cursorPos;
             }
+        case '0':
+            return cursorPos = new Point(cursorPos.row, 0);
+        case '$':
+            return cursorPos = new Point(cursorPos.row, text[cursorPos.row].length);
     }
     if (command == 'w') 
     {
