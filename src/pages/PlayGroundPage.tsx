@@ -3,11 +3,11 @@ import LessonPage from "../LessonPage/LessonPage"
 
 const startStr = ['Hello Vim!', 'Try moving the cursor.']
 
-const Homepage = () => {
+const PlayGround = () => {
     return <>
         {/*<VimApp startingStr={startStr}/>*/}
         <LessonPage />
     </>
 }
 
-export default Homepage
+export default PlayGround
