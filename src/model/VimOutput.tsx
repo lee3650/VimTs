@@ -9,7 +9,8 @@ export default class VimOutput {
     isCntrlKeyDown : boolean;
     visualStart : Point;
     
-    constructor(text : string[], cursorPos : Point, mode : string,  isCntrlKeyDown : boolean, visualStart : Point = new Point(0,0), commandCursorPos : Point = new Point(0, 0), commandText : string = "") {
+    constructor(text : string[], cursorPos : Point, mode : string,  isCntrlKeyDown : boolean, visualStart : Point = new Point(0,0), 
+        commandCursorPos : Point = new Point(0, 0), commandText : string = "") {
         this.text = text; 
         this.cursorPos = cursorPos; 
         this.mode = mode;

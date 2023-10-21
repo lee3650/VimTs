@@ -129,11 +129,9 @@ function App() {
   function formatFooter() {
     console.log(mode);
     if (mode != COMMAND_MODE) {
-      console.log("Should be here");
       return <p>--{mode}--</p>
     }
     else {
-      console.log("Why?");
       let cursorPart = commandText.slice(commandCursorPos[1], commandCursorPos[1] + 1)
       if (cursorPart.length === 0)
         cursorPart = ' '
