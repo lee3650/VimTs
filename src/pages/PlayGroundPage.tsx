@@ -2,13 +2,13 @@ import VimApp from "../VimApp"
 
 const startStr = ['Hello Vim!', 'Try moving the cursor.']
 
-const Homepage = () => {
+const PlayGround = () => {
     return <>
         <VimApp startingStr={startStr}/>
     </>
 }
 
-export default Homepage
+export default PlayGround
 
 
 
