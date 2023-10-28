@@ -145,8 +145,8 @@ function ExecuteInsertMode(curstate: VimOutput, commands: string): VimOutput {
         curstate.text[curstate.cursorPos.row].length - 1
       ) {
         const newText = curstate.text
-        let rowLen = 0
-        rowLen = newText[curstate.cursorPos.row].length
+        // let rowLen = 0
+        // rowLen = newText[curstate.cursorPos.row].length
         newText[curstate.cursorPos.row] = newText[
           curstate.cursorPos.row
         ].concat(newText[curstate.cursorPos.row + 1])
@@ -171,7 +171,7 @@ function ExecuteInsertMode(curstate: VimOutput, commands: string): VimOutput {
           curstate.isCntrlKeyDown
         )
       }
-    case 'Enter':
+    case 'Enter': {
       const newText = curstate.text
       let temp = curstate.text[curstate.cursorPos.row].slice(
         curstate.cursorPos.col
@@ -195,6 +195,7 @@ function ExecuteInsertMode(curstate: VimOutput, commands: string): VimOutput {
         curstate.mode,
         curstate.isCntrlKeyDown
       )
+    }
     case 'Shift': // fallthrough
     case 'F12':
     case 'F11':

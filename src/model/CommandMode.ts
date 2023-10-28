@@ -5,8 +5,8 @@ import Point from './Point'
 const HandleCommand = (
   curstate: VimOutput,
   command: string,
-  commandCursorPos: Point,
-  commandText: string
+  commandCursorPos: Point
+  // commandText: string
 ): VimOutput => {
   switch (command) {
     case 'Escape':
@@ -31,10 +31,11 @@ const HandleCommand = (
       }
       return curstate
     case 'Enter':
-
+      break
     default:
       commandCursorPos.col = commandCursorPos.col + 1
-      commandText = commandText.concat(command)
+      // commandText is never used
+      // commandText = commandText.concat(command)
       return curstate
   }
 }
