@@ -1,5 +1,25 @@
 import Point from "./Point";
 
+/**
+ * Inserts newText into text at the specified location given by curPos, used for copy paste as well as other commands which insert
+ * text into the document. Modfies text in place.
+ * @param {string[]} text
+ * @param {Point} curPos
+ * @param {string[]} newText
+ * @param {boolean} newLine
+ * @returns {void}
+ */
+export function insertText(text : string[], curPos : Point, newText : string[], newLine : boolean): void {
+    if (newLine) {
+        text.splice(curPos.row, 0, ...newText);
+        curPos.col = 0;
+        curPos.row = curPos.row + 1;
+    }
+    //TODO 
+}
+
+//TODO deleteText
+
 export function HandleMove(text : string[], cursorPos : Point, command : string) : Point {
     switch (command) {
         case 'ArrowDown':

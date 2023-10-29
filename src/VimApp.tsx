@@ -125,7 +125,6 @@ const VimApp : React.FC<{ startingStr : string[] }> = ({startingStr}) => {
   }
 
   function formatFooter() {
-    console.log(mode);
     if (mode != COMMAND_MODE) {
       return <p>--{mode}--</p>
     }
