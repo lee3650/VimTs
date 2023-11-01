@@ -13,16 +13,16 @@ function ExecuteControlInsertMode(curstate : VimOutput, commands : string) : Vim
         case 't':
             curstate.text[curstate.cursorPos.row] = "\t" + curstate.text[curstate.cursorPos.row]
             curstate.cursorPos = new Point(curstate.cursorPos.row, curstate.cursorPos.col + 1);
-            return new VimOutput(curstate.text, curstate.cursorPos, curstate.mode, curstate.isCntrlKeyDown);
+            return curstate;
         case 'd':
             if (curstate.text[curstate.cursorPos.row][0] == '\t') {
                 curstate.text[curstate.cursorPos.row] = curstate.text[curstate.cursorPos.row].substring(1)
                 curstate.cursorPos = new Point(curstate.cursorPos.row, curstate.cursorPos.col - 1);
-                return new VimOutput(curstate.text, curstate.cursorPos, curstate.mode, curstate.isCntrlKeyDown);
+                return curstate;
             }
-            return new VimOutput(curstate.text, curstate.cursorPos, curstate.mode, curstate.isCntrlKeyDown);
+            return curstate;
         default:
-            return new VimOutput(curstate.text, curstate.cursorPos, curstate.mode, curstate.isCntrlKeyDown);
+            return curstate;
     }
 }
 
@@ -33,13 +33,13 @@ function ExecuteInsertMode(curstate : VimOutput, commands : string) : VimOutput 
     switch (commands) {
         case 'Escape':
             curstate.mode = NORMAL_MODE
-            return new VimOutput(curstate.text, curstate.cursorPos, curstate.mode, curstate.isCntrlKeyDown)
+            return curstate
         case 'Backspace':
             if (curstate.cursorPos.col > 0) { // Stay on the screen
                 let newText = curstate.text
                 newText[curstate.cursorPos.row] = curstate.text[curstate.cursorPos.row].slice(0, curstate.cursorPos.col - 1) + curstate.text[curstate.cursorPos.row].slice(curstate.cursorPos.col);
                 curstate.cursorPos = new Point(curstate.cursorPos.row, curstate.cursorPos.col - 1);
-                return new VimOutput(newText, curstate.cursorPos, curstate.mode, curstate.isCntrlKeyDown);
+                return curstate;
             }
             else if (curstate.cursorPos.row > 0) {
                 let newText = curstate.text
@@ -54,16 +54,16 @@ function ExecuteInsertMode(curstate : VimOutput, commands : string) : VimOutput 
                 //+ curstate.text[curstate.cursorPos.row].slice(curstate.cursorPos.col)
                 curstate.cursorPos = new Point(curstate.cursorPos.row - 1, newText[curstate.cursorPos.row - 1].length - rowLen); 
                 newText.splice(-1);
-                return new VimOutput(newText, curstate.cursorPos, curstate.mode, curstate.isCntrlKeyDown);
+                return curstate;
             }
             else {
-                return new VimOutput(curstate.text, curstate.cursorPos, curstate.mode, curstate.isCntrlKeyDown);
+                return curstate;
             }
         case 'Delete':
             if (curstate.cursorPos.col < curstate.text[curstate.cursorPos.row].length) { // Stay on the screen
                 let newText = curstate.text
                 newText[curstate.cursorPos.row] = curstate.text[curstate.cursorPos.row].slice(0, curstate.cursorPos.col) + curstate.text[curstate.cursorPos.row].slice(curstate.cursorPos.col + 1);
-                return new VimOutput(newText, curstate.cursorPos, curstate.mode, curstate.isCntrlKeyDown);
+                return curstate;
             }
             else if (curstate.cursorPos.row < curstate.text[curstate.cursorPos.row].length - 1) {
                 let newText = curstate.text
@@ -77,10 +77,10 @@ function ExecuteInsertMode(curstate : VimOutput, commands : string) : VimOutput 
                 }
                 //+ curstate.text[curstate.cursorPos.row].slice(curstate.cursorPos.col)
                 newText.splice(-1);
-                return new VimOutput(newText, curstate.cursorPos, curstate.mode, curstate.isCntrlKeyDown);
+                return curstate;
             }
             else {
-                return new VimOutput(curstate.text, curstate.cursorPos, curstate.mode, curstate.isCntrlKeyDown);
+                return curstate;
             }
         case 'Enter':
             let newText = curstate.text
@@ -96,7 +96,7 @@ function ExecuteInsertMode(curstate : VimOutput, commands : string) : VimOutput 
             //+ curstate.text[curstate.cursorPos.row].slice(curstate.cursorPos.col)
             curstate.cursorPos = new Point(curstate.cursorPos.row + 1, 0);
             curstate.text = newText;
-            return new VimOutput(curstate.text, curstate.cursorPos, curstate.mode, curstate.isCntrlKeyDown);
+            return curstate;
         case 'Shift': // fallthrough
         case 'F12':
         case 'F11':
@@ -111,13 +111,13 @@ function ExecuteInsertMode(curstate : VimOutput, commands : string) : VimOutput 
         case 'F2':
         case 'F1':
         case 'Control':
-            return new VimOutput(curstate.text, curstate.cursorPos, curstate.mode, curstate.isCntrlKeyDown);
+            return curstate;
 
     }
     let newText = curstate.text
     newText[curstate.cursorPos.row] = curstate.text[curstate.cursorPos.row].slice(0, curstate.cursorPos.col) + commands + curstate.text[curstate.cursorPos.row].slice(curstate.cursorPos.col)
     curstate.cursorPos = new Point(curstate.cursorPos.row, curstate.cursorPos.col + 1);
-    return new VimOutput(newText, curstate.cursorPos, curstate.mode, curstate.isCntrlKeyDown) 
+    return curstate;
 }
 
 export default HandleInsert; 

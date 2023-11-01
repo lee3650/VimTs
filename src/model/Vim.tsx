@@ -5,6 +5,7 @@ import HandleCommand from "./CommandMode";
 import { HandleMove } from "./Utility";
 import HandleInsert from "./InsertMode";
 import HandleNormal from "./NormalMode";
+import NormalExecBuffer from "./NormalExecBuffer";
 
 export const NORMAL_MODE = 'normal'; 
 export const INSERT_MODE = 'insert'; 
@@ -20,7 +21,9 @@ export default class Vim {
     stringPos : number;
     isCntrlKeyDown : boolean;
     visualStart : Point;
-    previousText : string[][];
+    previousText : string[][]; // Undo/Redo
+    normalExecBuf : NormalExecBuffer;
+    clipboard : string[]; // For copy/paste, is this needed in VimOutput?
 
     constructor(startText : string)
     {
@@ -33,6 +36,8 @@ export default class Vim {
         this.isCntrlKeyDown = false;
         this.visualStart = new Point(0,0); 
         this.previousText = [this.text];
+        this.normalExecBuf = new NormalExecBuffer();
+        this.clipboard = [""];
     }
 
     handle_control(commands : string) : string {
@@ -41,47 +46,46 @@ export default class Vim {
     }
 
     execute(commands : string) : VimOutput {
+        let vimOut = new VimOutput(this.text, this.cursorPos, 
+            this.mode, this.isCntrlKeyDown, this.clipboard, this.visualStart) // Going to try to modify the VimOuput objects in place as much as possible from now on
         if (commands.includes('$CONTROL$')) {
             commands = this.handle_control(commands);
         }
         if (commands.includes('Arrow')) {
             this.cursorPos = HandleMove(this.text, this.cursorPos, commands)
             return new VimOutput(this.text, this.cursorPos, 
-                this.mode, this.isCntrlKeyDown, this.visualStart)
+                this.mode, this.isCntrlKeyDown, this.clipboard, this.visualStart)
         }
         if (this.mode == INSERT_MODE) {
-            const outpt = HandleInsert(new VimOutput(this.text, this.cursorPos, 
-                this.mode, this.isCntrlKeyDown, this.visualStart), commands);
+            const outpt = HandleInsert(vimOut, commands);
             this.cursorPos = outpt.cursorPos;
             this.text = outpt.text; 
             this.mode = outpt.mode; 
             return outpt
         }
         else if (this.mode == NORMAL_MODE) {
-            const outpt = HandleNormal(new VimOutput(this.text, this.cursorPos, 
-                this.mode, this.isCntrlKeyDown, this.visualStart), commands);
+            const outpt = HandleNormal(vimOut, commands, this.normalExecBuf);
             this.cursorPos = outpt.cursorPos;
             this.text = outpt.text; 
             this.mode = outpt.mode; 
+            this.clipboard = outpt.clipboard;
             return outpt
         }
         else if (this.mode == COMMAND_MODE) {
             let outpt = null;
-            outpt  = HandleCommand(new VimOutput(this.text, this.cursorPos, 
-                COMMAND_MODE, this.isCntrlKeyDown, this.visualStart), commands, this.commandCursorPos, this.commandText); 
+            outpt  = HandleCommand(vimOut, commands); 
             this.mode = outpt.mode; 
-            return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown, new Point(0, 0), this.commandCursorPos, this.commandText); 
+            return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown, this.clipboard, new Point(0, 0), this.commandCursorPos, this.commandText); 
         }
         else if (this.mode == VISUAL_MODE)
         {
-            const outpt = HandleVisual(new VimOutput(this.text, this.cursorPos, 
-                VISUAL_MODE, this.isCntrlKeyDown, this.visualStart), commands); 
+            const outpt = HandleVisual(vimOut, commands); 
 
             this.cursorPos = outpt.cursorPos;
             this.visualStart = outpt.visualStart; 
             this.mode = outpt.mode; 
-            return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown, this.visualStart); 
+            return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown, this.clipboard, this.visualStart); 
         }
-        return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown); 
+        return vimOut; 
     }
 }
