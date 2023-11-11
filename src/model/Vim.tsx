@@ -6,6 +6,7 @@ import { HandleMove } from './Utility'
 import HandleInsert from './InsertMode'
 import HandleNormal from './NormalMode'
 import NormalExecBuffer from './NormalExecBuffer'
+import PreviousStates from './PreviousStates'
 
 export const NORMAL_MODE = 'normal'
 export const INSERT_MODE = 'insert'
@@ -20,12 +21,11 @@ export default class Vim {
   cursorPos: Point
   commandCursorPos: Point
   mode: string
-  stringPos: number
   isCntrlKeyDown: boolean
   visualStart: Point
-  previousText: string[][] // Undo/Redo
   normalExecBuf: NormalExecBuffer
   clipboard: string[] // For copy/paste, is this needed in VimOutput?
+  previousVimStates : PreviousStates
 
   constructor(startText: string) {
     this.text = startText.split('\n')
@@ -33,12 +33,11 @@ export default class Vim {
     this.cursorPos = new Point(0, 0)
     this.commandCursorPos = new Point(0, 0)
     this.mode = NORMAL_MODE
-    this.stringPos = 0
     this.isCntrlKeyDown = false
     this.visualStart = new Point(0, 0)
-    this.previousText = [this.text]
     this.normalExecBuf = new NormalExecBuffer()
     this.clipboard = ['']
+    this.previousVimStates = new PreviousStates(this.text.slice(0), new Point(0, 0), 30)
   }
 
   handle_control(commands: string): string {
@@ -74,9 +73,12 @@ export default class Vim {
       this.cursorPos = outpt.cursorPos
       this.text = outpt.text
       this.mode = outpt.mode
+      if (this.mode == NORMAL_MODE) {
+        this.previousVimStates.addState(this.text, this.cursorPos)
+      }
       return outpt
     } else if (this.mode == NORMAL_MODE) {
-      const outpt = HandleNormal(vimOut, commands, this.normalExecBuf)
+      const outpt = HandleNormal(vimOut, commands, this.normalExecBuf, this.previousVimStates)
       this.cursorPos = outpt.cursorPos
       this.text = outpt.text
       this.mode = outpt.mode
