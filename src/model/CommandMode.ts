@@ -34,10 +34,10 @@ const HandleCommand = (
       break
     default:
       commandCursorPos.col = commandCursorPos.col + 1
-      // commandText is never used
-      // commandText = commandText.concat(command)
-      return curstate
+    // commandText is never used
+    // commandText = commandText.concat(command)
   }
+  return curstate
 }
 
 export default HandleCommand
