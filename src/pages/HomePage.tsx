@@ -21,6 +21,3 @@ const NavLink = styled.h1`
 `;
 
 export default HomePage
-
-
-
