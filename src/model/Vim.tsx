@@ -12,6 +12,8 @@ export const INSERT_MODE = 'insert';
 export const VISUAL_MODE = 'visual'; 
 export const COMMAND_MODE = 'command';
 
+var maxClipboardSize = 30;
+
 export default class Vim {
     text : string[]; 
     commandText : string;
@@ -22,6 +24,8 @@ export default class Vim {
     isCntrlKeyDown : boolean;
     visualStart : Point;
     previousText : string[][]; // Undo/Redo
+    previousCursor : Point[];
+    numUndos : number;
     normalExecBuf : NormalExecBuffer;
     clipboard : string[]; // For copy/paste, is this needed in VimOutput?
 
@@ -36,6 +40,8 @@ export default class Vim {
         this.isCntrlKeyDown = false;
         this.visualStart = new Point(0,0); 
         this.previousText = [this.text];
+        this.previousCursor = [new Point(0,0)]
+        this.numUndos = 0;
         this.normalExecBuf = new NormalExecBuffer();
         this.clipboard = [""];
     }
@@ -45,9 +51,16 @@ export default class Vim {
         return commands.slice(0, -1*'$CONTROL$'.length)
     }
 
+    addToChangeList() : void {
+        if (this.previousText.length >= maxClipboardSize) {
+            this.previousText.shift();
+        }
+        this.previousText.push(this.text);
+    }
+
     execute(commands : string) : VimOutput {
         let vimOut = new VimOutput(this.text, this.cursorPos, 
-            this.mode, this.isCntrlKeyDown, this.clipboard, this.visualStart) // Going to try to modify the VimOuput objects in place as much as possible from now on
+            this.mode, this.isCntrlKeyDown, this.clipboard, this.visualStart, new Point(0, 0), "", this.numUndos) // Going to try to modify the VimOuput objects in place as much as possible from now on
         if (commands.includes('$CONTROL$')) {
             commands = this.handle_control(commands);
         }
@@ -60,7 +73,10 @@ export default class Vim {
             const outpt = HandleInsert(vimOut, commands);
             this.cursorPos = outpt.cursorPos;
             this.text = outpt.text; 
-            this.mode = outpt.mode; 
+            this.mode = outpt.mode;
+            if (this.mode == NORMAL_MODE) {
+                this.addToChangeList();
+            }
             return outpt
         }
         else if (this.mode == NORMAL_MODE) {
@@ -69,12 +85,18 @@ export default class Vim {
             this.text = outpt.text; 
             this.mode = outpt.mode; 
             this.clipboard = outpt.clipboard;
+            this.numUndos = outpt.numUndos;
+            this.addToChangeList();
             return outpt
         }
         else if (this.mode == COMMAND_MODE) {
             let outpt = null;
             outpt  = HandleCommand(vimOut, commands); 
-            this.mode = outpt.mode; 
+            this.mode = outpt.mode;
+            this.numUndos = outpt.numUndos;
+            if (this.mode == NORMAL_MODE) {
+                this.addToChangeList();
+            }
             return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown, this.clipboard, new Point(0, 0), this.commandCursorPos, this.commandText); 
         }
         else if (this.mode == VISUAL_MODE)
@@ -83,7 +105,10 @@ export default class Vim {
 
             this.cursorPos = outpt.cursorPos;
             this.visualStart = outpt.visualStart; 
-            this.mode = outpt.mode; 
+            this.mode = outpt.mode;
+            if (this.mode == NORMAL_MODE) {
+                this.addToChangeList();
+            }
             return new VimOutput(this.text, this.cursorPos, this.mode, this.isCntrlKeyDown, this.clipboard, this.visualStart); 
         }
         return vimOut; 

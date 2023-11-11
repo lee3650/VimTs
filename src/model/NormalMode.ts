@@ -53,6 +53,8 @@ const execNormal = (curstate : VimOutput, command : string, iter : number) : boo
                 insertText(curstate.text, curstate.cursorPos, tempClip, true);
             }
             return true;
+        case 'u':
+            
         case 'Shift': // fallthrough
         case 'F12':
         case 'F11':
