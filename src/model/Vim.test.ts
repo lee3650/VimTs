@@ -123,3 +123,24 @@ test('Enter Key inverse Backspace', () => {
   output = myvim.execute('Enter')
   expect(output.text.join('\n')).toBe('this is a test\nt\nhis is a second line')
 })
+
+test('Yank one line', () => {
+  const myvim = new Vim('this is a test\nthis is a second line\nline3')
+  let output = myvim.execute('y')
+  output = myvim.execute('y')
+  output = myvim.execute('p')
+  expect(output.text.join('\n')).toBe(
+    'this is a test\nthis is a test\nthis is a second line\nline3'
+  )
+})
+
+test('Yank 3 lines', () => {
+  const myvim = new Vim('this is a test\nthis is a second line\nline3\n')
+  let output = myvim.execute('3')
+  output = myvim.execute('y')
+  output = myvim.execute('y')
+  output = myvim.execute('p')
+  expect(output.text.join('\n')).toBe(
+    'this is a test\nthis is a second line\nline3\nthis is a test\nthis is a second line\nline3\n'
+  )
+})

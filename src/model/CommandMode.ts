@@ -2,12 +2,11 @@ import VimOutput from './VimOutput'
 import { NORMAL_MODE } from './Vim'
 import Point from './Point'
 
-const HandleCommand = (
-  curstate: VimOutput,
-  command: string,
-  commandCursorPos: Point
-  // commandText: string
-): VimOutput => {
+function ExecuteCommand(curstate: VimOutput) {
+  return curstate
+}
+
+const HandleCommand = (curstate: VimOutput, command: string): VimOutput => {
   switch (command) {
     case 'Escape':
       curstate.mode = NORMAL_MODE
@@ -31,13 +30,16 @@ const HandleCommand = (
       }
       return curstate
     case 'Enter':
-      break
+      ExecuteCommand(curstate)
+      curstate.mode = NORMAL_MODE
+      curstate.commandText = ''
+      curstate.commandCursorPos = new Point(0, 0)
+      return curstate
     default:
-      commandCursorPos.col = commandCursorPos.col + 1
-    // commandText is never used
-    // commandText = commandText.concat(command)
+      curstate.commandCursorPos.col = curstate.commandCursorPos.col + 1
+      curstate.commandText = curstate.commandText.concat(command)
+      return curstate
   }
-  return curstate
 }
 
 export default HandleCommand

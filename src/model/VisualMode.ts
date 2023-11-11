@@ -14,6 +14,7 @@ const HandleVisual = (curstate: VimOutput, command: string): VimOutput => {
         newpos,
         VISUAL_MODE,
         curstate.isCntrlKeyDown,
+        curstate.clipboard,
         curstate.visualStart
       )
     }
@@ -22,7 +23,8 @@ const HandleVisual = (curstate: VimOutput, command: string): VimOutput => {
         curstate.text,
         curstate.cursorPos,
         NORMAL_MODE,
-        curstate.isCntrlKeyDown
+        curstate.isCntrlKeyDown,
+        curstate.clipboard
       )
   }
 

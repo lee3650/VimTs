@@ -18,12 +18,7 @@ function ExecuteControlInsertMode(
         curstate.cursorPos.row,
         curstate.cursorPos.col + 1
       )
-      return new VimOutput(
-        curstate.text,
-        curstate.cursorPos,
-        curstate.mode,
-        curstate.isCntrlKeyDown
-      )
+      return curstate
     case 'd':
       if (curstate.text[curstate.cursorPos.row][0] == '\t') {
         curstate.text[curstate.cursorPos.row] =
@@ -32,26 +27,11 @@ function ExecuteControlInsertMode(
           curstate.cursorPos.row,
           curstate.cursorPos.col - 1
         )
-        return new VimOutput(
-          curstate.text,
-          curstate.cursorPos,
-          curstate.mode,
-          curstate.isCntrlKeyDown
-        )
+        return curstate
       }
-      return new VimOutput(
-        curstate.text,
-        curstate.cursorPos,
-        curstate.mode,
-        curstate.isCntrlKeyDown
-      )
+      return curstate
     default:
-      return new VimOutput(
-        curstate.text,
-        curstate.cursorPos,
-        curstate.mode,
-        curstate.isCntrlKeyDown
-      )
+      return curstate
   }
 }
 
@@ -62,12 +42,7 @@ function ExecuteInsertMode(curstate: VimOutput, commands: string): VimOutput {
   switch (commands) {
     case 'Escape':
       curstate.mode = NORMAL_MODE
-      return new VimOutput(
-        curstate.text,
-        curstate.cursorPos,
-        curstate.mode,
-        curstate.isCntrlKeyDown
-      )
+      return curstate
     case 'Backspace':
       if (curstate.cursorPos.col > 0) {
         // Stay on the screen
@@ -82,12 +57,7 @@ function ExecuteInsertMode(curstate: VimOutput, commands: string): VimOutput {
           curstate.cursorPos.row,
           curstate.cursorPos.col - 1
         )
-        return new VimOutput(
-          newText,
-          curstate.cursorPos,
-          curstate.mode,
-          curstate.isCntrlKeyDown
-        )
+        return curstate
       } else if (curstate.cursorPos.row > 0) {
         const newText = curstate.text
         let rowLen = 0
@@ -106,19 +76,9 @@ function ExecuteInsertMode(curstate: VimOutput, commands: string): VimOutput {
           newText[curstate.cursorPos.row - 1].length - rowLen
         )
         newText.splice(-1)
-        return new VimOutput(
-          newText,
-          curstate.cursorPos,
-          curstate.mode,
-          curstate.isCntrlKeyDown
-        )
+        return curstate
       } else {
-        return new VimOutput(
-          curstate.text,
-          curstate.cursorPos,
-          curstate.mode,
-          curstate.isCntrlKeyDown
-        )
+        return curstate
       }
     case 'Delete':
       if (
@@ -134,12 +94,7 @@ function ExecuteInsertMode(curstate: VimOutput, commands: string): VimOutput {
           curstate.text[curstate.cursorPos.row].slice(
             curstate.cursorPos.col + 1
           )
-        return new VimOutput(
-          newText,
-          curstate.cursorPos,
-          curstate.mode,
-          curstate.isCntrlKeyDown
-        )
+        return curstate
       } else if (
         curstate.cursorPos.row <
         curstate.text[curstate.cursorPos.row].length - 1
@@ -157,19 +112,9 @@ function ExecuteInsertMode(curstate: VimOutput, commands: string): VimOutput {
         }
         //+ curstate.text[curstate.cursorPos.row].slice(curstate.cursorPos.col)
         newText.splice(-1)
-        return new VimOutput(
-          newText,
-          curstate.cursorPos,
-          curstate.mode,
-          curstate.isCntrlKeyDown
-        )
+        return curstate
       } else {
-        return new VimOutput(
-          curstate.text,
-          curstate.cursorPos,
-          curstate.mode,
-          curstate.isCntrlKeyDown
-        )
+        return curstate
       }
     case 'Enter': {
       const newText = curstate.text
@@ -189,12 +134,7 @@ function ExecuteInsertMode(curstate: VimOutput, commands: string): VimOutput {
       //+ curstate.text[curstate.cursorPos.row].slice(curstate.cursorPos.col)
       curstate.cursorPos = new Point(curstate.cursorPos.row + 1, 0)
       curstate.text = newText
-      return new VimOutput(
-        curstate.text,
-        curstate.cursorPos,
-        curstate.mode,
-        curstate.isCntrlKeyDown
-      )
+      return curstate
     }
     case 'Shift': // fallthrough
     case 'F12':
@@ -210,12 +150,7 @@ function ExecuteInsertMode(curstate: VimOutput, commands: string): VimOutput {
     case 'F2':
     case 'F1':
     case 'Control':
-      return new VimOutput(
-        curstate.text,
-        curstate.cursorPos,
-        curstate.mode,
-        curstate.isCntrlKeyDown
-      )
+      return curstate
   }
   const newText = curstate.text
   newText[curstate.cursorPos.row] =
@@ -226,12 +161,7 @@ function ExecuteInsertMode(curstate: VimOutput, commands: string): VimOutput {
     curstate.cursorPos.row,
     curstate.cursorPos.col + 1
   )
-  return new VimOutput(
-    newText,
-    curstate.cursorPos,
-    curstate.mode,
-    curstate.isCntrlKeyDown
-  )
+  return curstate
 }
 
 export default HandleInsert

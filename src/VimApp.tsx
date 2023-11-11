@@ -15,21 +15,21 @@ const VimApp: React.FC<{ startingStr: string[] }> = ({ startingStr }) => {
   const vim = new Vim(startingStr.join('\n'))
 
   useEffect(() => {
-    window.addEventListener('keydown', (e) => checkKeyPress(e))
+    window.addEventListener('keydown', checkKeyPress)
     return () => {
-      window.removeEventListener('keydown', (e) => checkKeyPress(e))
+      window.removeEventListener('keydown', checkKeyPress)
     }
   }, [])
 
   useEffect(() => {
-    window.addEventListener('keyup', (e) => checkSpecialKey(e))
+    window.addEventListener('keyup', checkSpecialKey)
     return () => {
-      window.removeEventListener('keyup', (e) => checkSpecialKey(e))
+      window.removeEventListener('keyup', checkSpecialKey)
     }
   }, [])
 
   const checkKeyPress = useCallback(
-    (event: KeyboardEvent) => {
+    (event: any) => {
       event.preventDefault()
       let key = event.key
       if (event.ctrlKey) {
@@ -51,7 +51,7 @@ const VimApp: React.FC<{ startingStr: string[] }> = ({ startingStr }) => {
   )
 
   const checkSpecialKey = useCallback(
-    (event: KeyboardEvent) => {
+    (event: any) => {
       let key = ''
       if (event.ctrlKey) {
         key = '$CONTROL$'
@@ -153,7 +153,7 @@ const VimApp: React.FC<{ startingStr: string[] }> = ({ startingStr }) => {
   }
 
   return (
-    <div className="page">
+    <div onKeyDown={checkKeyPress} className="page">
       <pre>{text.map(formatLine)}</pre>
       <div className="footer">{formatFooter()}</div>
     </div>
