@@ -1,23 +1,24 @@
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import { Link } from 'react-router-dom'
+import styled from 'styled-components'
 
 const HomePage = () => {
-    return <>
-        <Title>Welcome to VimTS</Title>
-        <NavLink>
-            <Link to='/playground'>Go to Playground</Link>
-        </NavLink>
-        <NavLink>
-            <Link to='/learning'>Go to Learning page</Link>
-        </NavLink>
+  return (
+    <>
+      <Title>Welcome to VimTS</Title>
+      <NavLink>
+        <Link to="/playground">Go to Playground</Link>
+      </NavLink>
+      <NavLink>
+        <Link to="/learning">Go to Learning page</Link>
+      </NavLink>
     </>
+  )
 }
 
 const Title = styled.h1`
   color: white;
-`;
+`
 
-const NavLink = styled.h1`
-`;
+const NavLink = styled.h1``
 
 export default HomePage

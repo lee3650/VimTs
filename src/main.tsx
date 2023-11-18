@@ -15,5 +15,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Route path='/learning/*' element={<LessonPage />}/>
       </Routes>
     </BrowserRouter>
-  </React.StrictMode>,
+  </React.StrictMode>
 )
