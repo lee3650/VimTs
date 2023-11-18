@@ -1,5 +1,4 @@
-import VimApp from "../VimApp"
-import LessonPage from "./LessonPage/LessonPage"
+import VimApp from '../VimApp'
 
 const startStr = ['Hello Vim!', 'Try moving the cursor.']
 
