@@ -18,7 +18,6 @@ export function insertText(
   if (newLine) {
     text.splice(curPos.row, 0, ...newText)
     curPos.col = 0
-    console.log('test')
     curPos.row = curPos.row + 1
   }
   //TODO
