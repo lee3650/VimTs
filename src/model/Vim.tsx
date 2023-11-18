@@ -41,7 +41,13 @@ export default class Vim {
   }
 
   handle_control(commands: string): string {
-    this.isCntrlKeyDown = !this.isCntrlKeyDown
+    if (commands.includes("$CONTROL-UP$"))
+    {
+      this.isCntrlKeyDown = false
+      return commands.slice(0, -1 * '$CONTROL-UP$'.length)
+    }
+
+    this.isCntrlKeyDown = true 
     return commands.slice(0, -1 * '$CONTROL$'.length)
   }
 
@@ -54,7 +60,7 @@ export default class Vim {
       this.clipboard,
       this.visualStart
     ) // Going to try to modify the VimOuput objects in place as much as possible from now on
-    if (commands.includes('$CONTROL$')) {
+    if (commands.includes('$CONTROL$') || commands.includes("$CONTROL-UP$")) {
       commands = this.handle_control(commands)
     }
     if (commands.includes('Arrow')) {
