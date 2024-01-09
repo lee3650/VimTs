@@ -53,8 +53,8 @@ const VimApp: React.FC<{ startingStr: string[] }> = ({ startingStr }) => {
   const checkSpecialKey = useCallback(
     (event: any) => {
       let key = ''
-      if (event.ctrlKey) {
-        key = '$CONTROL$'
+      if (event.key == "Control") {
+        key = '$CONTROL-UP$'
         vim.execute(key)
       }
       //setControlKey?

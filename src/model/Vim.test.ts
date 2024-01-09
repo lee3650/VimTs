@@ -144,3 +144,4 @@ test('Yank 3 lines', () => {
     'this is a test\nthis is a second line\nline3\nthis is a test\nthis is a second line\nline3\n'
   )
 })
+

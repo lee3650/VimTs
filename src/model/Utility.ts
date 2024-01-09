@@ -9,21 +9,40 @@ import Point from './Point'
  * @param {boolean} newLine
  * @returns {void}
  */
-export function insertText(
-  text: string[],
-  curPos: Point,
-  newText: string[],
-  newLine: boolean
-): void {
-  if (newLine) {
-    text.splice(curPos.row, 0, ...newText)
-    curPos.col = 0
-    curPos.row = curPos.row + 1
-  }
-  //TODO
+export function insertText(text : string[], curPos : Point, newText : string[], newLine : boolean): void {
+    if (newLine) {
+        text.splice(curPos.row, 0, ...newText);
+        curPos.col = 0;
+        curPos.row = curPos.row + 1;
+    }
+    //TODO Insert text within the newline
 }
 
-//TODO deleteText
+/**
+ * Deletes text starting at position  
+ * text into the document. Modfies text in place.
+ * @param {string[]} text
+ * @param {Point} startPos
+ * @param {Point} endPos
+ * @returns {void}
+ */
+export function deleteText(text : string[], startPos : Point, endPos : Point) : string[] {
+    return text
+}
+
+/**
+ * Finds the first occurrence of searchString in the text. Returns the first character fo the found string
+ *
+ * @param {string[]} text
+ * @param {Point} startPos
+ * @param {string} searchString
+ * @returns {void}
+ */
+export function find(text: string[], startPos : Point, searchString : string) : Point {
+    return startPos
+}
+
+
 
 export function HandleMove(
   text: string[],
